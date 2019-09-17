@@ -71,7 +71,7 @@ if(!inputFile) {
         let scraperContent = [];
         for(let i =0; i<domains.length; i++) {
             let domain = domains[i];
-            if(domain && domain.trim() && domain === 'aradicaldifference.com') {
+            if(domain && domain.trim()) {
                 scraperContent.push(await getTitleOfDomain(domain.trim()));
             }
         }
