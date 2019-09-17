@@ -12,7 +12,7 @@ async function getTitleOfDomain(domain) {
     console.log("#=========================#");
     console.log(domain)
     console.log("#=========================#");
-    await rp(`http://www.${domain}`).then(body => {
+    await rp.get(`http://www.${domain}`, {timeout: 3000}).then(body => {
         const $ = cheerio.load(body);
         let title = $('title').text().trim();
         if(!title) {
@@ -34,7 +34,11 @@ async function getTitleOfDomain(domain) {
             domain
         };
     }).catch( error => {
-        console.log(`error:- ${error.statusCode} - ${error.statusMessage}`); // Print the error if one occurred
+        if(error.message.indexOf('TIMEDOUT') > -1) {
+            console.log("error:- Timeout"); // Print the error if one occurred    
+        } else {
+            console.log(`error:- ${error.statusCode} - ${error.statusMessage}`); // Print the error if one occurred
+        }
         result = {
             domain
         };
