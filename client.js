@@ -3,7 +3,7 @@ const cheerio = require('cheerio');
 const fs = require('fs');
 const csvWriter = require('csv-writer');
 const util = require('util');
-const exec = util.promisify(require('child_process').exec);
+
 
 let parseBody = body  => {
     const $ = cheerio.load(body);
@@ -67,7 +67,7 @@ async function getTitleOfDomain(domain) {
     // }
     const options = {
         method: 'POST',
-        uri: 'http://localhost:3002/getDomainInfo',
+        uri: `${targetUrl}/getDomainInfo`,
         body: {
             "domains": [domain]
         },
@@ -94,7 +94,8 @@ let convertToCSV = content => {
         header: [
           {id: 'domain', title: 'Domain'},
           {id: 'title', title: 'Title'},
-          {id: 'description', title: 'Description'}
+          {id: 'description', title: 'Description'},
+          {id: 'shop', title: "Shop"}
         ]
     });
     csv.writeRecords(content).then(
@@ -102,6 +103,7 @@ let convertToCSV = content => {
 }
 
 const inputFile = process.argv[2] ? process.argv[2] : "";
+const targetUrl = process.argv[3] ? process.argv[3] : "http://localhost:3002";
 if(!inputFile) {
     console.error("Enter valid Input File");
 } else {

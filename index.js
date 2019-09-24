@@ -54,7 +54,7 @@ async function getDeailsOfDomains(req) {
           let html = await getHtmlBody(domain);
           if(html) {
             let parse = parseBody(html);
-            webDetails = {...webDetails, ...parse}; 
+            webDetails = {...webDetails, ...parse};
           }
         } catch(error) {
           console.log(`Error on get html body for ${domain}`, error);
@@ -123,15 +123,62 @@ function parseBody(body) {
   if(!description) {
     description = $("meta[name='twitter:description']").attr('content');
   }
+  let shop;
+  if($("a[href]:contains(Shop)").length) {
+    console.log("==========SHOP===========")
+    shop = $("a[href]:contains(Shop)");
+  } else if($("a[href]:contains(Store)").length) {
+    console.log("==========STORE===========")
+    shop = $("a[href]:contains(Store)");
+  } else if($("a[href]:contains(Wishlist)").length) {
+    console.log("==========WISHLIST===========")
+    shop = $("a[href]:contains(Wishlist)");
+  }else if($("a[href]:contains(Checkout)").length) {
+    console.log("==========CHECKOUT===========")
+    shop = $("a[href]:contains(Checkout)");
+  }else if($("a[href]:contains(Visa)").length) {
+    console.log("==========VISA===========")
+    shop = $("a[href]:contains(Visa)");
+  }else if($("a[href]:contains(Bag)").length) {
+    console.log("==========BAG===========")
+    shop = $("a[href]:contains(Bag)");
+  }else if($("a[href]:contains(Cart)").length) {
+    console.log("==========CART===========")
+    shop = $("a[href]:contains(Cart)");
+  } else if($("a[href]:contains(Subscription)").length) {
+    console.log("==========Subscription===========")
+    shop = $("a[href]:contains(Subscription)");
+  } else if($("a[href]:contains(Buy)").length) {
+    console.log("==========BUY===========")
+    shop = $("a[href]:contains(Buy)");
+  } else if($("a[href]:contains(Pricing)").length) {
+    console.log("==========PRICING===========")
+    shop = $("a[href]:contains(Pricing)");
+  } else if($("a[href]:contains(Membership)").length) {
+    console.log("==========MEMBERSHIP===========")
+    shop = $("a[href]:contains(Membership)");
+  } else if($("a[href]:contains(Online)").length) {
+    console.log("==========ONLINE===========")
+    shop = $("a[href]:contains(Online)");
+  }else if($("a[href]:contains(Order)").length) {
+    console.log("==========ORDER===========")
+    shop = $("a[href]:contains(Order)");
+  }
+  console.log("SHOP",$(shop[0]).text());
+  //shop = shop ? shop[0] : "";
+  if(shop) {
+    shop = $(shop[0]).attr('href');
+  }
   return {
     title,
-    description
+    description,
+    shop
   };
 }
 
 async function test() {
   const resbody = await getDeailsOfDomains({
-    queryStringParameters: {
+    body: {
       domains: ['aquavida.com',
         'aqueduck.com',
         'aquickdelivery.com',
@@ -155,7 +202,7 @@ async function test() {
         ]
     }
   });
-  console.log(JSON.stringify(resbody))
+  //console.log(JSON.stringify(resbody))
   //done(null, resbody);
 }
 //test();
@@ -171,4 +218,6 @@ app.get('/', (req,res) => {
     data: "Server is up"
   });
 });
-app.listen(port);
+app.listen(port, () => {
+  console.log(`Server is ready and running in ${port}`);
+});

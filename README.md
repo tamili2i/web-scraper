@@ -17,9 +17,9 @@ Run: node client.js <filePath>
 Run: npm install
 
 ##Start
-Run: nohup node index.js >> server.log
+Run: nohup node index.js >> server.log &
 logs: tail -f server.log
 
 ##Stop
-Run: ps -ax|grep nohub
+Run: ps -ax|grep 'node index.js'
 Run: kill -9 <pid>
