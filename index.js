@@ -4,6 +4,7 @@ const express = require('express');
 const exec = util.promisify(require('child_process').exec);
 const cheerio = require('cheerio');
 const formats = [
+  '${domain}',
   'https://www.${domain}',
   'https://${domain}',
   'http://www.${domain}',
@@ -67,13 +68,7 @@ async function getDeailsOfDomains(req) {
 }
 
 async function getHtmlBody(domain) {
-  let { stdout } = await exec(`curl ${domain}`);
-  if (stdout)
-    return checkRedirect(stdout, domain);
-  else {
-    stdout = await checkDomainWithFormats(domain);
-  }
-  return checkRedirect(stdout, domain);
+  return checkDomainWithFormats(domain);
 }
 
 async function checkDomainWithFormats(domain) {
@@ -81,8 +76,14 @@ async function checkDomainWithFormats(domain) {
   for(let i=0; i< formats.length; i++) {
     let url = formats[i].replace('${domain}', domain);
     console.log(`Checking  ${url}`);
-    ({stdout} = await exec(`curl ${url}`));
-    //console.log('response ', stdout)
+    try {
+      ({stdout} = await exec(`curl ${url}`));
+      //console.log(stdout)
+      stdout = await checkRedirect(stdout);
+      //console.log(stdout)
+    } catch(error) {
+      console.log(`Error in getting data ${url}`)
+    }
     if(stdout) {
       break;
     }
@@ -90,17 +91,18 @@ async function checkDomainWithFormats(domain) {
   return stdout;
 }
 
-async function checkRedirect(stdout, domain) {
+async function checkRedirect(stdout) {
   if(stdout && stdout.indexOf('redirected') > -1 || stdout.indexOf('Moved Permanently') > -1 
     || stdout.indexOf('301 Moved') > -1 || stdout.indexOf('302 Found') > -1 || stdout.indexOf('Object moved') > -1) {
     console.log('getting redirected url');
     const $ = cheerio.load(stdout);
     let url = $('a').attr('href');
-    if(!url) {
-      stdout = await checkDomainWithFormats(domain);
-    } else {
+    if(url) {
       console.log(`new url ${url}`);
       ({stdout}  = await exec(`curl ${url}`));
+    } else {
+      console.log('URL not found');
+      stdout = "";
     }
   }
   return stdout;
@@ -125,48 +127,36 @@ function parseBody(body) {
   }
   let shop;
   if($("a[href]:contains(Shop)").length) {
-    console.log("==========SHOP===========")
     shop = $("a[href]:contains(Shop)");
   } else if($("a[href]:contains(Store)").length) {
-    console.log("==========STORE===========")
     shop = $("a[href]:contains(Store)");
   } else if($("a[href]:contains(Wishlist)").length) {
-    console.log("==========WISHLIST===========")
     shop = $("a[href]:contains(Wishlist)");
   }else if($("a[href]:contains(Checkout)").length) {
-    console.log("==========CHECKOUT===========")
     shop = $("a[href]:contains(Checkout)");
   }else if($("a[href]:contains(Visa)").length) {
-    console.log("==========VISA===========")
     shop = $("a[href]:contains(Visa)");
   }else if($("a[href]:contains(Bag)").length) {
-    console.log("==========BAG===========")
     shop = $("a[href]:contains(Bag)");
   }else if($("a[href]:contains(Cart)").length) {
-    console.log("==========CART===========")
     shop = $("a[href]:contains(Cart)");
   } else if($("a[href]:contains(Subscription)").length) {
-    console.log("==========Subscription===========")
     shop = $("a[href]:contains(Subscription)");
   } else if($("a[href]:contains(Buy)").length) {
-    console.log("==========BUY===========")
     shop = $("a[href]:contains(Buy)");
   } else if($("a[href]:contains(Pricing)").length) {
-    console.log("==========PRICING===========")
     shop = $("a[href]:contains(Pricing)");
   } else if($("a[href]:contains(Membership)").length) {
-    console.log("==========MEMBERSHIP===========")
     shop = $("a[href]:contains(Membership)");
   } else if($("a[href]:contains(Online)").length) {
-    console.log("==========ONLINE===========")
     shop = $("a[href]:contains(Online)");
   }else if($("a[href]:contains(Order)").length) {
-    console.log("==========ORDER===========")
     shop = $("a[href]:contains(Order)");
   }
-  console.log("SHOP",$(shop[0]).text());
+  
   //shop = shop ? shop[0] : "";
   if(shop) {
+    console.log("SHOP",$(shop[0]).text());
     shop = $(shop[0]).attr('href');
   }
   return {
@@ -179,17 +169,18 @@ function parseBody(body) {
 async function test() {
   const resbody = await getDeailsOfDomains({
     body: {
-      domains: ['aquavida.com',
-        'aqueduck.com',
-        'aquickdelivery.com',
-        'ar-15lowerreceivers.com',
-        'ar15tac.com',
-        'arachnogear.com',
-        'aradicaldifference.com',
-        'aramarkuniform.com',
-        'aranchhorse.com',
-        'arawazausa.com',
-        'arbordakota.com',
+      domains: [
+        // 'aquavida.com',
+        // 'aqueduck.com',
+        // 'aquickdelivery.com',
+        // 'ar-15lowerreceivers.com',
+        // 'ar15tac.com',
+        // 'arachnogear.com',
+        //'aradicaldifference.com',
+        //'aramarkuniform.com',
+         'aranchhorse.com',
+         'arawazausa.com',
+         'arbordakota.com',
         'arborhousefriends.com',
         'arborvitaeny.com',
         'arcadiamarine.com',
@@ -202,7 +193,7 @@ async function test() {
         ]
     }
   });
-  //console.log(JSON.stringify(resbody))
+  console.log(JSON.stringify(resbody))
   //done(null, resbody);
 }
 //test();
