@@ -156,7 +156,7 @@ function parseBody(body) {
   
   //shop = shop ? shop[0] : "";
   if(shop) {
-    console.log("SHOP",$(shop[0]).text());
+    console.log("SHOP KEYWORD",$(shop[0]).text());
     shop = $(shop[0]).attr('href');
   }
   return {
