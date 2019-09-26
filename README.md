@@ -18,8 +18,10 @@ Run: npm install
 
 ## Start
 Run: nohup node index.js >> server.log &
+
 logs: tail -f server.log
 
 ## Stop
 Run: ps -ax|grep 'node index.js'
+
 Run: kill -9 <pid>
