@@ -8,7 +8,7 @@ Move to project folder
 Run: npm install
 
 ## Start
-Run: node client.js <filePath> <targetIp>
+Run: node client.js \<filePath\> \<targetIp\>
 
 ##### *Replace filepath input file and targetIp with server url*
 
