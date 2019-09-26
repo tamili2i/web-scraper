@@ -4,22 +4,22 @@ This project was generated with nodejs v10.16.3 to scrap title and description f
 
 Move to project folder
 
-##Install dependencies Client
+## Install dependencies Client
 Run: npm install
 
-##Start
-Run: node client.js <filePath> 
+## Start
+Run: node client.js <filePath> <targetIp>
 
-**Replace filepath input file
+*Replace filepath input file and targetIp with server url*
 
-#Server
-##Install Dependencies
+# Server
+## Install Dependencies
 Run: npm install
 
-##Start
+## Start
 Run: nohup node index.js >> server.log &
 logs: tail -f server.log
 
-##Stop
+## Stop
 Run: ps -ax|grep 'node index.js'
 Run: kill -9 <pid>
