@@ -17,11 +17,10 @@ Run: node client.js <filePath> <targetIp>
 Run: npm install
 
 ## Start
-Run: nohup node index.js >> server.log &
+Run: nohup node index.js >> server.log 2>&1 & echo $! > job_pid.txt
 
 logs: tail -f server.log
 
 ## Stop
-Run: ps -ax|grep 'node index.js'
 
-Run: kill -9 <pid>
+Run: kill -9 `cat job_pid.txt`
