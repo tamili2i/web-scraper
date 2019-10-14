@@ -14,6 +14,5 @@ module.exports = {
     } catch(err) {
       console.log(`Error in get ${url}==> ${err.message}`)
     }
-    
   }
 }

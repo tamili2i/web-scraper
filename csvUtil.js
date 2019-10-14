@@ -1,4 +1,5 @@
 const csvWriter = require('csv-writer');
+const csvToJson = require('csvtojson');
 
 /**
  * <p>convert object into csv file and save in local system
@@ -15,6 +16,15 @@ let convertToCSV = (content, headers, fileName) => {
       ()=> console.log('The CSV file was written successfully'));
 }
 
+let convertCsvToJson = (fileName, header) => {
+  return csvToJson({
+    noheader: 'field1' === header ? true : false,
+    trim:true,
+    output: "json"
+  }).fromFile(fileName);
+};
+
 module.exports = {
-  convertToCSV
+  convertToCSV,
+  convertCsvToJson
 }
