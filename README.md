@@ -28,4 +28,5 @@ Run: kill -9 `cat job_pid.txt`
 
 # Location Iq
 Run: node locationiq.js \<inputFile\> \<headerFlag\>
+
 Eg: node locationiq.js \home\dell\input.csv header=address
